@@ -1,0 +1,44 @@
+Dejé de mezclar lógica de negocio con frameworks.
+
+Y mi código mejoró un 100%.
+
+Hace unos meses descubrí la Arquitectura Hexagonal.
+
+Y cambió completamente mi forma de estructurar proyectos.
+
+Antes:
+→ Mis tests dependían de la base de datos
+→ Cambiar de framework era un infierno
+→ El código de negocio estaba mezclado con Express, React, MongoDB...
+
+Ahora:
+→ Tests unitarios en milisegundos
+→ Puedo cambiar de PostgreSQL a MongoDB sin tocar la lógica
+→ Cada capa tiene una responsabilidad clara
+
+En el carrusel te muestro las 6 ventajas principales:
+
+1️⃣ Independencia del framework
+2️⃣ Testing simplificado
+3️⃣ Código más mantenible
+4️⃣ Facilita el trabajo en equipo
+5️⃣ Adaptable a cambios
+6️⃣ Lógica de negocio protegida
+
+Y para que no te quedes solo con la teoría...
+
+He creado un proyecto real con esta arquitectura:
+→ Frontend con React + TypeScript
+→ Backend con Express + TypeScript
+→ Tests unitarios con Vitest
+→ Todo el código en GitHub
+
+Link en el primer comentario 👇
+
+---
+
+¿Ya usas arquitectura hexagonal en tus proyectos?
+
+Cuéntame en los comentarios qué arquitectura prefieres.
+
+#DesarrolloWeb #Arquitectura #TypeScript #React #NodeJS #CleanCode #SoftwareEngineering #Programacion #Backend #Frontend

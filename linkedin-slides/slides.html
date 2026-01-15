@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Slides - Arquitectura Hexagonal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1a1a2e;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .slide {
+      width: 1080px;
+      height: 1080px;
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+      font-family: 'Inter', sans-serif;
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .slide-number {
+      font-size: 280px;
+      font-weight: 900;
+      color: rgba(99, 102, 241, 0.15);
+      position: absolute;
+      top: -40px;
+      right: 40px;
+      line-height: 1;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .slide-title {
+      font-size: 64px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-title span {
+      color: #818cf8;
+    }
+
+    .slide-subtitle {
+      font-size: 32px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .advantage-title {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      color: #818cf8;
+    }
+
+    .advantage-text {
+      font-size: 36px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 40px;
+    }
+
+    .code-block {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 16px;
+      padding: 32px;
+      font-family: 'Fira Code', monospace;
+      font-size: 22px;
+      line-height: 1.6;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .code-block .comment {
+      color: #6b7280;
+    }
+
+    .code-block .keyword {
+      color: #c084fc;
+    }
+
+    .code-block .class-name {
+      color: #60a5fa;
+    }
+
+    .code-block .string {
+      color: #34d399;
+    }
+
+    .code-block .function {
+      color: #fbbf24;
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .cta-slide {
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cta-slide .slide-title {
+      font-size: 56px;
+      margin-bottom: 32px;
+    }
+
+    .cta-icon {
+      font-size: 80px;
+      margin-bottom: 40px;
+    }
+
+    .cta-link {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      padding: 24px 48px;
+      border-radius: 16px;
+      font-size: 28px;
+      font-weight: 600;
+      margin-top: 40px;
+      display: inline-block;
+    }
+
+    .cover-slide {
+      text-align: center;
+      align-items: center;
+    }
+
+    .cover-slide .slide-title {
+      font-size: 72px;
+    }
+
+    .hexagon {
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+
+    .hexagon-inner {
+      width: 180px;
+      height: 180px;
+      background: #1a1a2e;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+    }
+
+    .author {
+      position: absolute;
+      bottom: 40px;
+      left: 80px;
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .slide-indicator {
+      position: absolute;
+      bottom: 40px;
+      right: 80px;
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Portada -->
+  <div class="slide cover-slide">
+    <div class="hexagon">
+      <div class="hexagon-inner">⬡</div>
+    </div>
+    <div class="slide-title">
+      Arquitectura <span>Hexagonal</span>
+    </div>
+    <div class="slide-subtitle">
+      6 ventajas que transformarán tu código
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">1/8</div>
+  </div>
+
+  <!-- Slide 2: Ventaja 1 -->
+  <div class="slide">
+    <div class="slide-number">1</div>
+    <div class="slide-content">
+      <div class="tag">Ventaja</div>
+      <div class="advantage-title">Independencia del Framework</div>
+      <div class="advantage-text">
+        Tu lógica de negocio no depende de Express, React ni ningún framework.
+      </div>
+      <div class="code-block">
+        <span class="comment">// El caso de uso NO conoce Express</span><br>
+        <span class="keyword">class</span> <span class="class-name">CreateTask</span> {<br>
+        &nbsp;&nbsp;<span class="keyword">constructor</span>(<span class="function">repository</span>: TaskRepository) {}<br><br>
+        &nbsp;&nbsp;<span class="keyword">async</span> <span class="function">execute</span>(title: <span class="class-name">string</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">this</span>.repository.<span class="function">create</span>(title);<br>
+        &nbsp;&nbsp;}<br>
+        }
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">2/8</div>
+  </div>
+
+  <!-- Slide 3: Ventaja 2 -->
+  <div class="slide">
+    <div class="slide-number">2</div>
+    <div class="slide-content">
+      <div class="tag">Ventaja</div>
+      <div class="advantage-title">Testing Simplificado</div>
+      <div class="advantage-text">
+        Tests unitarios sin base de datos, sin HTTP, sin dependencias externas.
+      </div>
+      <div class="code-block">
+        <span class="comment">// Mock simple del repositorio</span><br>
+        <span class="keyword">const</span> mockRepo = {<br>
+        &nbsp;&nbsp;create: <span class="function">vi.fn</span>()<br>
+        };<br><br>
+        <span class="keyword">const</span> useCase = <span class="keyword">new</span> <span class="class-name">CreateTask</span>(mockRepo);<br>
+        <span class="keyword">await</span> useCase.<span class="function">execute</span>(<span class="string">"Mi tarea"</span>);<br><br>
+        <span class="function">expect</span>(mockRepo.create).<span class="function">toHaveBeenCalled</span>();
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">3/8</div>
+  </div>
+
+  <!-- Slide 4: Ventaja 3 -->
+  <div class="slide">
+    <div class="slide-number">3</div>
+    <div class="slide-content">
+      <div class="tag">Ventaja</div>
+      <div class="advantage-title">Código Mantenible</div>
+      <div class="advantage-text">
+        Separación clara entre capas. Cada una con responsabilidad única.
+      </div>
+      <div class="code-block">
+        <span class="comment">// Estructura del proyecto</span><br>
+        src/<br>
+        ├── <span class="class-name">domain/</span><br>
+        │&nbsp;&nbsp;&nbsp;├── entities/&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Lógica de negocio</span><br>
+        │&nbsp;&nbsp;&nbsp;├── ports/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Interfaces</span><br>
+        │&nbsp;&nbsp;&nbsp;└── useCases/&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Casos de uso</span><br>
+        └── <span class="class-name">adapters/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── ui/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// React, Vue...</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└── repositories/&nbsp;<span class="comment">// HTTP, DB...</span>
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">4/8</div>
+  </div>
+
+  <!-- Slide 5: Ventaja 4 -->
+  <div class="slide">
+    <div class="slide-number">4</div>
+    <div class="slide-content">
+      <div class="tag">Ventaja</div>
+      <div class="advantage-title">Trabajo en Equipo</div>
+      <div class="advantage-text">
+        Un dev en UI, otro en persistencia. Sin conflictos ni dependencias.
+      </div>
+      <div class="code-block">
+        <span class="comment">// Dev 1: trabaja en el adaptador UI</span><br>
+        <span class="keyword">const</span> <span class="class-name">App</span> = () => {<br>
+        &nbsp;&nbsp;<span class="keyword">const</span> task = <span class="keyword">await</span> createTask.<span class="function">execute</span>(title);<br>
+        }<br><br>
+        <span class="comment">// Dev 2: trabaja en el adaptador de DB</span><br>
+        <span class="keyword">class</span> <span class="class-name">PostgresRepository</span> {<br>
+        &nbsp;&nbsp;<span class="keyword">async</span> <span class="function">create</span>(title) { <span class="comment">/* SQL */</span> }<br>
+        }
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">5/8</div>
+  </div>
+
+  <!-- Slide 6: Ventaja 5 -->
+  <div class="slide">
+    <div class="slide-number">5</div>
+    <div class="slide-content">
+      <div class="tag">Ventaja</div>
+      <div class="advantage-title">Adaptable a Cambios</div>
+      <div class="advantage-text">
+        ¿Cambiar de MongoDB a PostgreSQL? Solo un nuevo adaptador.
+      </div>
+      <div class="code-block">
+        <span class="comment">// Antes: MongoDB</span><br>
+        <span class="keyword">class</span> <span class="class-name">MongoRepository</span> <span class="keyword">implements</span> TaskRepository {}<br><br>
+        <span class="comment">// Después: PostgreSQL</span><br>
+        <span class="keyword">class</span> <span class="class-name">PostgresRepository</span> <span class="keyword">implements</span> TaskRepository {}<br><br>
+        <span class="comment">// El dominio NO cambia ✓</span>
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">6/8</div>
+  </div>
+
+  <!-- Slide 7: Ventaja 6 -->
+  <div class="slide">
+    <div class="slide-number">6</div>
+    <div class="slide-content">
+      <div class="tag">Ventaja</div>
+      <div class="advantage-title">Lógica Protegida</div>
+      <div class="advantage-text">
+        Las reglas de negocio aisladas en el centro. Los detalles técnicos en la periferia.
+      </div>
+      <div class="code-block">
+        <span class="comment">// La validación está en el DOMINIO</span><br>
+        <span class="keyword">class</span> <span class="class-name">CreateTask</span> {<br>
+        &nbsp;&nbsp;<span class="keyword">async</span> <span class="function">execute</span>(title: <span class="class-name">string</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (!title.<span class="function">trim</span>()) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> <span class="class-name">Error</span>(<span class="string">"Title required"</span>);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">this</span>.repo.<span class="function">create</span>(title);<br>
+        &nbsp;&nbsp;}<br>
+        }
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">7/8</div>
+  </div>
+
+  <!-- Slide 8: CTA -->
+  <div class="slide cta-slide">
+    <div class="cta-icon">🚀</div>
+    <div class="slide-title">
+      ¿Quieres ver un <span>ejemplo real</span>?
+    </div>
+    <div class="slide-subtitle">
+      He creado un proyecto completo con esta arquitectura:<br>
+      Frontend (React) + Backend (Express)
+    </div>
+    <div class="cta-link">
+      github.com/rarrior/hexagonal-todo-example
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">8/8</div>
+  </div>
+
+</body>
+</html>
