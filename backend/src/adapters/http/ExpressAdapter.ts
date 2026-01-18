@@ -1,27 +1,16 @@
-// Adapter - HTTP Server using Express
-import express, { Request, Response } from 'express';
-import cors from 'cors';
+// Adapter - HTTP Server using Express (REST endpoints)
+import { Application, Request, Response } from 'express';
 import { CreateTask } from '@/domain/useCases/CreateTask';
 import { GetAllTasks } from '@/domain/useCases/GetAllTasks';
 
 export class ExpressAdapter {
-  private app = express();
-
   constructor(
     private createTask: CreateTask,
     private getAllTasks: GetAllTasks
-  ) {
-    this.setupMiddleware();
-    this.setupRoutes();
-  }
+  ) {}
 
-  private setupMiddleware() {
-    this.app.use(cors());
-    this.app.use(express.json());
-  }
-
-  private setupRoutes() {
-    this.app.get('/tasks', async (req: Request, res: Response) => {
+  setupRoutes(app: Application) {
+    app.get('/tasks', async (req: Request, res: Response) => {
       try {
         const tasks = await this.getAllTasks.execute();
         res.json(tasks);
@@ -30,7 +19,7 @@ export class ExpressAdapter {
       }
     });
 
-    this.app.post('/tasks', async (req: Request, res: Response) => {
+    app.post('/tasks', async (req: Request, res: Response) => {
       try {
         const { title, completed } = req.body;
         const task = await this.createTask.execute(title, completed);
@@ -39,11 +28,7 @@ export class ExpressAdapter {
         res.status(400).json({ error: (error as Error).message });
       }
     });
-  }
 
-  start(port: number) {
-    this.app.listen(port, () => {
-      console.log(`Server running on http://localhost:${port}`);
-    });
+    console.log('REST endpoints ready at /tasks');
   }
 }

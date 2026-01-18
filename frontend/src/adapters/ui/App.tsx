@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { Task } from '@/domain/entities/Task';
 import { CreateTask } from '@/domain/useCases/CreateTask';
 import { GetAllTasks } from '@/domain/useCases/GetAllTasks';
-import { HttpTaskRepository } from '@/adapters/repositories/HttpTaskRepository';
+import { GraphQLTaskRepository } from '@/adapters/repositories/GraphQLTaskRepository';
+import { apolloClient } from '@/adapters/graphql/apolloClient';
 import {
   Container,
   Card,
@@ -31,8 +32,8 @@ import {
   Badge,
 } from './App.styles';
 
-// Dependency Injection
-const taskRepository = new HttpTaskRepository('http://localhost:3000');
+// Dependency Injection - Using GraphQL
+const taskRepository = new GraphQLTaskRepository(apolloClient);
 const createTaskUseCase = new CreateTask(taskRepository);
 const getAllTasksUseCase = new GetAllTasks(taskRepository);
 
