@@ -1,0 +1,52 @@
+Añadí GraphQL a mi proyecto.
+
+Sin tocar una sola línea del dominio.
+
+La semana pasada compartí un proyecto con Arquitectura Hexagonal.
+
+Hoy quise ponerla a prueba de verdad:
+
+"¿Qué pasa si añado GraphQL manteniendo REST?"
+
+El resultado me sorprendió:
+
+Lo que NO tuve que cambiar:
+→ Ninguna entidad del dominio
+→ Ningún caso de uso
+→ Ningún puerto (interface)
+→ La lógica de negocio quedó intacta
+
+Lo que SÍ creé (solo adaptadores):
+→ ApolloAdapter.ts (servidor GraphQL)
+→ GraphQLTaskRepository.ts (cliente GraphQL)
+→ Schema y resolvers
+
+5 archivos nuevos. 0 cambios en el dominio.
+
+Eso es el poder real de la arquitectura hexagonal:
+
+Los adaptadores son "enchufables".
+
+¿Quieres REST? → ExpressAdapter
+¿Quieres GraphQL? → ApolloAdapter
+¿Quieres ambos? → Los dos en paralelo
+
+El dominio no sabe ni le importa cómo llegan los datos.
+
+En el carrusel te muestro:
+
+1️⃣ El problema que resuelve
+2️⃣ La estructura antes y después
+3️⃣ Los únicos archivos que creé
+4️⃣ Cómo los resolvers usan los casos de uso
+5️⃣ El resultado final
+
+Todo el código está en GitHub (link en comentarios)
+
+---
+
+¿Has migrado algún proyecto de REST a GraphQL?
+
+Cuéntame cómo fue tu experiencia.
+
+#GraphQL #REST #ArquitecturaHexagonal #TypeScript #NodeJS #ApolloServer #CleanArchitecture #SoftwareEngineering #Backend #DesarrolloWeb

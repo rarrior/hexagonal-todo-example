@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Slides - De REST a GraphQL con Arquitectura Hexagonal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1a1a2e;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .slide {
+      width: 1080px;
+      height: 1080px;
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+      font-family: 'Inter', sans-serif;
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .slide-number {
+      font-size: 280px;
+      font-weight: 900;
+      color: rgba(236, 72, 153, 0.15);
+      position: absolute;
+      top: -40px;
+      right: 40px;
+      line-height: 1;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .slide-title {
+      font-size: 64px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-title span {
+      color: #f472b6;
+    }
+
+    .slide-title .graphql {
+      color: #e535ab;
+    }
+
+    .slide-title .rest {
+      color: #60a5fa;
+    }
+
+    .slide-subtitle {
+      font-size: 32px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-title {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      color: #f472b6;
+    }
+
+    .section-text {
+      font-size: 36px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 40px;
+    }
+
+    .code-block {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 16px;
+      padding: 32px;
+      font-family: 'Fira Code', monospace;
+      font-size: 20px;
+      line-height: 1.6;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .code-block.small {
+      font-size: 18px;
+      padding: 24px;
+    }
+
+    .code-block .comment {
+      color: #6b7280;
+    }
+
+    .code-block .keyword {
+      color: #c084fc;
+    }
+
+    .code-block .class-name {
+      color: #60a5fa;
+    }
+
+    .code-block .string {
+      color: #34d399;
+    }
+
+    .code-block .function {
+      color: #fbbf24;
+    }
+
+    .code-block .graphql-type {
+      color: #e535ab;
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(236, 72, 153, 0.2);
+      color: #f472b6;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .comparison {
+      display: flex;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .comparison-box {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+      padding: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .comparison-box.no-change {
+      border-color: rgba(52, 211, 153, 0.3);
+    }
+
+    .comparison-box.new {
+      border-color: rgba(236, 72, 153, 0.3);
+    }
+
+    .comparison-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .comparison-title.green {
+      color: #34d399;
+    }
+
+    .comparison-title.pink {
+      color: #f472b6;
+    }
+
+    .comparison-list {
+      list-style: none;
+      font-size: 22px;
+      line-height: 2;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .file-tree {
+      font-family: 'Fira Code', monospace;
+      font-size: 22px;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .file-tree .new {
+      color: #f472b6;
+    }
+
+    .file-tree .existing {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .file-tree .modified {
+      color: #fbbf24;
+    }
+
+    .cta-slide {
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cta-slide .slide-title {
+      font-size: 56px;
+      margin-bottom: 32px;
+    }
+
+    .cta-icon {
+      font-size: 80px;
+      margin-bottom: 40px;
+    }
+
+    .cta-link {
+      background: linear-gradient(135deg, #e535ab 0%, #f472b6 100%);
+      padding: 24px 48px;
+      border-radius: 16px;
+      font-size: 28px;
+      font-weight: 600;
+      margin-top: 40px;
+      display: inline-block;
+    }
+
+    .cover-slide {
+      text-align: center;
+      align-items: center;
+    }
+
+    .cover-slide .slide-title {
+      font-size: 72px;
+    }
+
+    .icons-row {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 48px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-box {
+      width: 120px;
+      height: 120px;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+
+    .icon-box.rest {
+      background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+    }
+
+    .icon-box.graphql {
+      background: linear-gradient(135deg, #e535ab 0%, #f472b6 100%);
+    }
+
+    .icon-box.hexagon {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    }
+
+    .arrow {
+      font-size: 48px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 60px;
+      justify-content: center;
+      margin-top: 60px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 80px;
+      font-weight: 900;
+      color: #f472b6;
+    }
+
+    .stat-label {
+      font-size: 24px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 8px;
+    }
+
+    .author {
+      position: absolute;
+      bottom: 40px;
+      left: 80px;
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .slide-indicator {
+      position: absolute;
+      bottom: 40px;
+      right: 80px;
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .highlight-box {
+      background: rgba(236, 72, 153, 0.1);
+      border: 2px solid rgba(236, 72, 153, 0.3);
+      border-radius: 16px;
+      padding: 32px;
+      margin-top: 32px;
+      text-align: center;
+    }
+
+    .highlight-text {
+      font-size: 32px;
+      font-weight: 600;
+      color: #f472b6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Portada -->
+  <div class="slide cover-slide">
+    <div class="icons-row">
+      <div class="icon-box rest">REST</div>
+      <div class="arrow">+</div>
+      <div class="icon-box graphql">GQL</div>
+      <div class="arrow">=</div>
+      <div class="icon-box hexagon">⬡</div>
+    </div>
+    <div class="slide-title">
+      De <span class="rest">REST</span> a <span class="graphql">GraphQL</span>
+    </div>
+    <div class="slide-subtitle">
+      Sin tocar el dominio gracias a la Arquitectura Hexagonal
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">1/7</div>
+  </div>
+
+  <!-- Slide 2: El Reto -->
+  <div class="slide">
+    <div class="slide-number">?</div>
+    <div class="slide-content">
+      <div class="tag">El Reto</div>
+      <div class="section-title">¿Añadir GraphQL sin romper nada?</div>
+      <div class="section-text">
+        Tenía un proyecto con REST funcionando perfectamente.
+      </div>
+      <div class="section-text">
+        Quería añadir GraphQL manteniendo REST en paralelo.
+      </div>
+      <div class="highlight-box">
+        <div class="highlight-text">
+          "Si la arquitectura hexagonal funciona,<br>
+          el dominio no debería cambiar"
+        </div>
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">2/7</div>
+  </div>
+
+  <!-- Slide 3: Lo que NO cambió -->
+  <div class="slide">
+    <div class="slide-number">0</div>
+    <div class="slide-content">
+      <div class="tag">Resultado</div>
+      <div class="section-title">Lo que NO tuve que tocar</div>
+      <div class="comparison">
+        <div class="comparison-box no-change">
+          <div class="comparison-title green">✓ Dominio intacto</div>
+          <ul class="comparison-list">
+            <li>→ Task.ts (entidad)</li>
+            <li>→ TaskRepository.ts (puerto)</li>
+            <li>→ CreateTask.ts (caso de uso)</li>
+            <li>→ GetAllTasks.ts (caso de uso)</li>
+          </ul>
+        </div>
+        <div class="comparison-box new">
+          <div class="comparison-title pink">+ Solo adaptadores nuevos</div>
+          <ul class="comparison-list">
+            <li>→ schema.ts</li>
+            <li>→ resolvers.ts</li>
+            <li>→ ApolloAdapter.ts</li>
+            <li>→ GraphQLTaskRepository.ts</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">3/7</div>
+  </div>
+
+  <!-- Slide 4: Estructura de archivos -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="tag">Backend</div>
+      <div class="section-title">Nueva estructura</div>
+      <div class="code-block">
+        <div class="file-tree">
+src/adapters/<br>
+├── <span class="existing">http/</span><br>
+│   └── <span class="modified">ExpressAdapter.ts</span> <span class="comment">// modificado</span><br>
+│<br>
+├── <span class="new">graphql/</span> <span class="comment">// NUEVO</span><br>
+│   ├── <span class="new">schema.ts</span><br>
+│   ├── <span class="new">resolvers.ts</span><br>
+│   └── <span class="new">ApolloAdapter.ts</span><br>
+│<br>
+└── <span class="existing">repositories/</span><br>
+    └── <span class="existing">InMemoryTaskRepository.ts</span>
+        </div>
+      </div>
+      <div class="highlight-box">
+        <div class="highlight-text">
+          REST en /tasks → GraphQL en /graphql
+        </div>
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">4/7</div>
+  </div>
+
+  <!-- Slide 5: Los resolvers usan casos de uso -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="tag">Clave</div>
+      <div class="section-title">Resolvers = Adaptadores</div>
+      <div class="section-text">
+        Los resolvers solo llaman a los casos de uso existentes.
+      </div>
+      <div class="code-block small">
+        <span class="comment">// Los resolvers NO tienen lógica de negocio</span><br>
+        <span class="keyword">export const</span> <span class="function">createResolvers</span> = (<br>
+        &nbsp;&nbsp;<span class="function">createTask</span>: <span class="class-name">CreateTask</span>,<br>
+        &nbsp;&nbsp;<span class="function">getAllTasks</span>: <span class="class-name">GetAllTasks</span><br>
+        ) => ({<br>
+        &nbsp;&nbsp;<span class="graphql-type">Query</span>: {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;tasks: () => <span class="function">getAllTasks</span>.<span class="function">execute</span>()<br>
+        &nbsp;&nbsp;},<br>
+        &nbsp;&nbsp;<span class="graphql-type">Mutation</span>: {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;createTask: (_, { input }) =><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">createTask</span>.<span class="function">execute</span>(input.title)<br>
+        &nbsp;&nbsp;}<br>
+        });
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">5/7</div>
+  </div>
+
+  <!-- Slide 6: Inyección de dependencias -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="tag">Magia</div>
+      <div class="section-title">Mismos casos de uso, dos adaptadores</div>
+      <div class="code-block small">
+        <span class="comment">// index.ts - Punto de entrada</span><br><br>
+        <span class="comment">// 1. Crear instancias compartidas</span><br>
+        <span class="keyword">const</span> taskRepository = <span class="keyword">new</span> <span class="class-name">InMemoryTaskRepository</span>();<br>
+        <span class="keyword">const</span> createTask = <span class="keyword">new</span> <span class="class-name">CreateTask</span>(taskRepository);<br>
+        <span class="keyword">const</span> getAllTasks = <span class="keyword">new</span> <span class="class-name">GetAllTasks</span>(taskRepository);<br><br>
+        <span class="comment">// 2. Conectar AMBOS adaptadores</span><br>
+        <span class="keyword">const</span> restAdapter = <span class="keyword">new</span> <span class="class-name">ExpressAdapter</span>(createTask, getAllTasks);<br>
+        <span class="keyword">const</span> graphqlAdapter = <span class="keyword">new</span> <span class="class-name">ApolloAdapter</span>(createTask, getAllTasks);<br><br>
+        <span class="comment">// 3. Ambos funcionan en paralelo!</span><br>
+        restAdapter.<span class="function">setupRoutes</span>(app);&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// /tasks</span><br>
+        graphqlAdapter.<span class="function">applyMiddleware</span>(app); <span class="comment">// /graphql</span>
+      </div>
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">6/7</div>
+  </div>
+
+  <!-- Slide 7: CTA -->
+  <div class="slide cta-slide">
+    <div class="cta-icon">⬡</div>
+    <div class="slide-title">
+      <span>5 archivos nuevos</span><br>
+      0 cambios en el dominio
+    </div>
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-number">0</div>
+        <div class="stat-label">Entidades modificadas</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">0</div>
+        <div class="stat-label">Casos de uso tocados</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">2</div>
+        <div class="stat-label">APIs funcionando</div>
+      </div>
+    </div>
+    <div class="cta-link">
+      github.com/rarrior/hexagonal-todo-example
+    </div>
+    <div class="author">@rarrior</div>
+    <div class="slide-indicator">7/7</div>
+  </div>
+
+</body>
+</html>
